@@ -1,23 +1,23 @@
 import axios from 'axios';
 
 export default {
-    install: (app) => {
-        axios.interceptors.request.use(
-            (config) => {
-                const token = localStorage.getItem('token');
-                if(token) {
-                    config.headers.Authorization = `Bearer ${token}`;
-                }
-                return config;
-            },
-            (error) => {
-                return Promise.reject(error);
+  install: (app) => {
+
+    axios.interceptors.request.use(
+        (config) => {
+            const token = localStorage.getItem('token');
+            if(token) {
+                config.headers.Authorization = `Bearer ${token}`;
             }
-        );
+            return config;
+        },
+        (error) => {
+            return Promise.reject(error);
+        }
+    )
 
+    app.config.globalProperties.$axios = axios;
 
-        app.config.globalProperties.$axios = axios;
-
-        app.provide('axios', axios);
-    }
-}
+    app.provide('axios', axios);
+  },
+};

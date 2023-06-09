@@ -13,7 +13,7 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-gray-200">
+        <footer class="bg-gray-100">
             <div class="container mx-auto py-4 px-6">
                 <div class="flex justify-between items-center">
                     <div>

@@ -35,6 +35,11 @@ const routes = [
                 name: 'ProductDetails',
                 props: true,
                 component: () => import('@/components/Products/ProductDetails.vue')
+             },
+             {
+                path: 'cart',
+                name: 'Cart',
+                component: () => import('@/components/Cart/Cart.vue')
              }
         ]
     }

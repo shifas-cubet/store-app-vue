@@ -8,7 +8,7 @@
         </header>
 
         <!-- Main Content -->
-        <main class="container mx-auto py-8 px-6">
+        <main class="container mx-auto py-24 px-6">
             <router-view></router-view>
         </main>
 

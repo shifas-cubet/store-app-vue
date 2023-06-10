@@ -223,7 +223,10 @@
             </fieldset>
           </div>
 
-          <button type="submit" class="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Add to bag</button>
+          <button 
+          type="button"
+           @click="onAddToBag"
+          class="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Add to bag</button>
         </form>
       </div>
 
@@ -267,6 +270,7 @@
 <script>
 import config from '@/config';
 import { inject, onMounted, ref } from 'vue';
+import { useCartStore } from '@/stores/cart.js';
 
 export default {
   name: 'ProductDetails',
@@ -283,16 +287,29 @@ export default {
 
     const product = ref({});
 
+    const cartStore = useCartStore();
+
     const fetchProduct = async () => {
       const response = await $axios.get(`${config.apiBaseURL}/product/${id}`);
       product.value = response.data.data;
+    }
+
+    const onAddToBag = () => {
+      const cutPrice = product.value.price;
+      const productItem = {
+        ...product.value,
+        price: product.value.actual_price,
+        cut_price: cutPrice
+      }
+      cartStore.addToCart(productItem);
     }
 
     onMounted(fetchProduct);
 
 
     return {
-      product
+      product,
+      onAddToBag
     };
 
   }

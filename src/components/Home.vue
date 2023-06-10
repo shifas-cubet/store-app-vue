@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-100 min-h-screen">
+    <div class="flex flex-col h-screen bg-gray-100">
         <!-- Header -->
         <header class="bg-white shadow">
             <div class="container mx-auto">
@@ -8,7 +8,7 @@
         </header>
 
         <!-- Main Content -->
-        <main class="container mx-auto py-24 px-6">
+        <main class="flex-grow container mx-auto py-24 px-6 overflow-y-auto">
             <router-view></router-view>
         </main>
 

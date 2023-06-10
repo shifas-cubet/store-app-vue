@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/auth';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
@@ -42,7 +43,20 @@ const routes = [
                 component: () => import('@/components/Cart/Cart.vue')
              }
         ]
-    }
+    },
+    {
+        path: '/checkout',
+        name: 'Checkout',
+        component: () => import('@/components/Checkout/Checkout.vue'),
+        beforeEnter: (to, from, next) => {
+            const authStore = useAuthStore();
+            if(!authStore.isAuthenticated) {
+                next('/login');
+            } else {
+                next();
+            }
+        }
+     }
 ];
 
 const router = createRouter({

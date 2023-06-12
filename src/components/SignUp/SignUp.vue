@@ -197,14 +197,14 @@ export default {
     setup() {
         const router = useRouter();
         const form = reactive({
-            email: 'shifashassan32@mailinator.com',
-            password: 'Shifas1995$',
-            password_confirmation: 'Shifas1995$',
-            phone_number: '8129894205',
-            street: 'Panjaramukk',
-            city: 'Thrissur',
-            state: 'Kerala',
-            zip: '680-501'
+            email: '',
+            password: '',
+            password_confirmation: '',
+            phone_number: '',
+            street: '',
+            city: '',
+            state: '',
+            zip: ''
         });
         const formSubmitted = ref(false);
         const apiResponseMessage = ref('');

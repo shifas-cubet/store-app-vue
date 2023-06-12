@@ -66,6 +66,40 @@
                 to="/sign-up">Sign Up</router-link>
         
             </p>
+
+
+            <div class="text-center">
+                <v-snackbar
+                :color="authStore.apiResponseStatus ? 'green-lighten-1' : 'red-lighten-1'"
+                v-model="snackbar"
+                absolute
+                z-index="9999"
+                timeout="3000">
+                {{ authStore.apiResponseMessage }}
+                <template v-slot:actions>
+                    <v-btn
+                    variant="text"
+                    @click="snackbar = false"
+                    >
+                    Close
+                    </v-btn>
+                </template>
+                </v-snackbar>
+            </div>
+
+            <v-overlay
+            :model-value="overlay"
+            class="align-center justify-center"
+            persistent
+            >
+                <v-progress-circular
+                    color="primary"
+                    indeterminate
+                    size="64"
+                ></v-progress-circular>
+            </v-overlay>
+
+
         </div>
     </div>
 </template>
@@ -74,16 +108,20 @@
 import { useAuthStore } from '@/stores/auth';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators'
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
     name: 'Login',
     setup() {
+        const snackbar = ref(false)
+        const overlay = ref(false);
         const authStore = useAuthStore();
+        const router = useRouter();
 
         const form = reactive({
-            email: '',
-            password: ''
+            email: 'shifashassan23@mailinator.com',
+            password: '12345678$A'
         });
 
         const formSubmitted = ref(false);
@@ -103,16 +141,32 @@ export default {
 
             try {
                 await authStore.login(form.email, form.password);
+                overlay.value = true;
             } catch (error) {
                 console.log('Login Failed', error);
             }
+
+            snackbar.value = true;
         }
+
+        watch(overlay, (overlayVal) => {
+            if(overlayVal) {
+                setTimeout(() => {
+                    overlay.value = false
+                    router.push({ name: 'ProductsListing' });
+                }, 1000)
+            }
+        });
+
 
         return {
             form,
             formSubmitted,
             v$,
-            onLogin
+            onLogin,
+            authStore,
+            snackbar,
+            overlay
         }
 
     }

@@ -5,7 +5,8 @@ import axios from 'axios';
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         token: localStorage.getItem('token') || '',
-        status: ''
+        apiResponseStatus: '',
+        apiResponseMessage: ''
     }),
     getters: {
         isAuthenticated: (state) => !!state.token
@@ -16,11 +17,13 @@ export const useAuthStore = defineStore('auth', {
             try {
                 const response = await axios.post(`${config.apiBaseURL}/login`, {email, password})
                 const token = response.data.data.token;
-                this.status = 'Success';
+                this.apiResponseStatus = true;
+                this.apiResponseMessage = response.data.message;
                 this.token = token;
                 localStorage.setItem('token', token);
             } catch(error) {
-                this.status = 'error';
+                this.apiResponseStatus = false;
+                this.apiResponseMessage = error?.response?.data?.message;
                 localStorage.removeItem('token');
                 throw error;
             }

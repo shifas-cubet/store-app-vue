@@ -6,7 +6,8 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         token: localStorage.getItem('token') || '',
         apiResponseStatus: '',
-        apiResponseMessage: ''
+        apiResponseMessage: '',
+        authUser: ''
     }),
     getters: {
         isAuthenticated: (state) => !!state.token
@@ -32,6 +33,23 @@ export const useAuthStore = defineStore('auth', {
         storeToken(token) {
             this.token = token;
             localStorage.setItem('token', token);
+        },
+
+        storeAuthUser(authUser) {
+            this.authUser = authUser;
+        },
+
+        async logout() {
+            try {
+                await axios.post(`${config.apiBaseURL}/logout`, {}, {
+                    Authorization: `Bearer ${this.token}`
+                });
+                this.token = '';
+                this.authUser = '';
+                localStorage.removeItem('token');
+            } catch(error) {
+                throw error;
+            }
         }
     }
 })

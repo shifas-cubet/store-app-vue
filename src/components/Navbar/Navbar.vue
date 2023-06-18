@@ -124,8 +124,12 @@
                                 id="user-menu-item-0">Your Profile</a>
                             <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
                                 id="user-menu-item-1">Settings</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
-                                id="user-menu-item-2">Sign out</a>
+                            <a href="#" 
+                            @click="logout()"
+                            class="block px-4 py-2 text-sm text-gray-700" 
+                            role="menuitem" 
+                            tabindex="-1"
+                            id="user-menu-item-2">Sign out</a>
                         </div>
                     </div>
                 </div>
@@ -151,6 +155,18 @@
                 </div>
             </div>
         </transition>
+
+        <v-overlay
+            :model-value="overlay"
+            class="align-center justify-center"
+            persistent
+            >
+            <v-progress-circular
+                color="primary"
+                indeterminate
+                size="64"
+            ></v-progress-circular>
+        </v-overlay>
  
     </nav>
 </template>
@@ -159,7 +175,9 @@
 import config from '@/config';
 import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart';
+import { watch } from 'vue';
 import { ref, computed, onMounted, inject } from 'vue';
+import { useRouter } from 'vue-router';
 
     export default {
         name: 'Navbar',
@@ -170,8 +188,9 @@ import { ref, computed, onMounted, inject } from 'vue';
             const isMobileMenuOpen = ref(false);
             const authStore = useAuthStore();
             const user = ref({});
-
+            const router = useRouter();
             const cartStore = useCartStore();
+            const overlay = ref(false);
 
             const toggleDropdown = () => {
                 isDropdownOpen.value = !isDropdownOpen.value;
@@ -214,6 +233,24 @@ import { ref, computed, onMounted, inject } from 'vue';
                 }
             });
 
+            const logout = async () => {
+                try {
+                    await authStore.logout();                    
+                    overlay.value = true;
+                } catch(error) {
+                    console.log('Logout Failed', error);
+                }
+            }
+
+            watch(overlay, (overlayVal) => {
+                if(overlayVal) {
+                    setTimeout(() => {
+                        overlay.value = false;
+                        router.push({ name: 'Login' });
+                    }, 1000);
+                }
+            })
+
             return {
                 toggleDropdown,
                 isDropdownOpen,
@@ -221,7 +258,9 @@ import { ref, computed, onMounted, inject } from 'vue';
                 cartStore,
                 toggleMobileMenu,
                 mobileMenuClass,
-                user
+                user,
+                logout,
+                overlay
             }
         }
     }

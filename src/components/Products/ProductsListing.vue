@@ -26,13 +26,18 @@
 
 <script>
 import config from '@/config';
+import { useAuthStore } from '@/stores/auth';
 import { inject, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 
 export default {
     name: 'ProductsListing',
     setup() {
         
+        const route = useRouter();
+        const authStore = useAuthStore();
+        const token = ref(null);
         const products = ref([]);
 
         const fetchProducts = async () => {
@@ -42,7 +47,12 @@ export default {
 
         const $axios = inject('axios');
 
-        onMounted(fetchProducts);
+        onMounted(() => {
+            token.value = route.currentRoute.value.query.token;
+            authStore.storeToken(token.value);
+            fetchProducts();
+            route.push('/app/products');
+        });
 
         return {
             products

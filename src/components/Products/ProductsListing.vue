@@ -49,7 +49,9 @@ export default {
 
         onMounted(() => {
             token.value = route.currentRoute.value.query.token;
-            authStore.storeToken(token.value);
+            if(token.value) {
+                authStore.storeToken(token.value);
+            }
             fetchProducts();
             route.push('/app/products');
         });

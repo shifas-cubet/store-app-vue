@@ -98,7 +98,7 @@
                                 @click="toggleDropdown">
                                 <span class="sr-only">Open user menu</span>
                                 <img class="h-8 w-8 rounded-full"
-                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                    :src="user.profile_pic_path ? user.profile_pic_path : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'"
                                     alt="">
                             </button>
                         </div>
@@ -156,8 +156,10 @@
 </template>
 
 <script>
+import config from '@/config';
+import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, inject } from 'vue';
 
     export default {
         name: 'Navbar',
@@ -166,6 +168,8 @@ import { ref, computed } from 'vue';
             const isDropdownOpen = ref(false);
             const accountDropdown = ref(null);
             const isMobileMenuOpen = ref(false);
+            const authStore = useAuthStore();
+            const user = ref({});
 
             const cartStore = useCartStore();
 
@@ -195,7 +199,20 @@ import { ref, computed } from 'vue';
                     'block': isMobileMenuOpen.value,
                     'hidden': !isMobileMenuOpen.value
                 };
-            })
+            });
+
+            const $axios = inject('axios');
+
+            const fetchAuthUser = async () => {
+                const response = await $axios.get(`${config.apiBaseURL}/auth/user`);
+                user.value = response.data.data;
+            }
+
+            onMounted(() => {
+                if(authStore.isAuthenticated) {
+                    fetchAuthUser();
+                }
+            });
 
             return {
                 toggleDropdown,
@@ -203,7 +220,8 @@ import { ref, computed } from 'vue';
                 accountDropdown,
                 cartStore,
                 toggleMobileMenu,
-                mobileMenuClass
+                mobileMenuClass,
+                user
             }
         }
     }
